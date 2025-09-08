@@ -14,7 +14,7 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                bat 'npm install'
             }
         }
 
@@ -22,7 +22,7 @@ pipeline {
             steps {
                 // npm audit will exit nonzero if vulnerabilities are found,
                 // so we add "|| true" to avoid failing the build.
-                sh 'npm audit --json || true'
+                bat 'npm audit --json || exit /b 0'
 
                 // Optional: run snyk if installed
                 // sh 'npx snyk test || true'
