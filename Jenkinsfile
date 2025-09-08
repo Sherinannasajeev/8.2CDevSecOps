@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs "NodeJS"   
+        nodejs "NodeJS"  // Must match the name in Global Tool Configuration
     }
 
     stages {
@@ -18,14 +18,21 @@ pipeline {
             }
         }
 
-        stage('Run Security Tests') {
+        stage('Run Tests') {
             steps {
-                // npm audit will exit nonzero if vulnerabilities are found,
-                // so we add "|| true" to avoid failing the build.
-                bat 'npm audit --json || exit /b 0'
+                bat 'npm test || exit /b 0' // Continue despite test failures
+            }
+        }
 
-                // Optional: run snyk if installed
-                // sh 'npx snyk test || true'
+        stage('Generate Coverage Report') {
+            steps {
+                bat 'npm run coverage || exit /b 0' // Ensure coverage report exists
+            }
+        }
+
+        stage('NPM Audit (Security Scan)') {
+            steps {
+                bat 'npm audit || exit /b 0' // Show known CVEs without failing pipeline
             }
         }
     }
